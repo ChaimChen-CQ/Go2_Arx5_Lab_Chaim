@@ -7,7 +7,7 @@ from isaaclab.utils import configclass
 
 
 from Go2Arm_Lab.tasks.manager_based.go2arm_lab.go2arm_lab_env_cfg import LocomotionVelocityEnvCfg
-from Go2Arm_Lab.assets.go2arm_articulation_cfg import GO2ARM_CFG
+from Go2Arm_Lab.assets.go2_arx5_articulation_cfg import GO2_ARX5_CFG
 
 
 @configclass
@@ -15,7 +15,7 @@ class Go2ARMFlatEnvCfg(LocomotionVelocityEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
-        self.scene.robot = GO2ARM_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+        self.scene.robot = GO2_ARX5_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
 
         # event
         self.events.push_robot = None

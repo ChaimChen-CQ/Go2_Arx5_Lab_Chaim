@@ -47,8 +47,8 @@ def joint_pos_rel(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneEntityC
                         "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                        "waist", "shoulder", "elbow", 
-                        "forearm_roll", "wrist_angle", "wrist_rotate"
+                        "joint1", "joint2", "joint3",
+                        "joint4", "joint5", "joint6"
                         ],preserve_order=True)
 
     return asset.data.joint_pos[:, joint_ids] - asset.data.default_joint_pos[:, joint_ids]
@@ -65,8 +65,8 @@ def joint_vel_rel(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneEntityC
                         "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
                         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
                         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                        "waist", "shoulder", "elbow", 
-                        "forearm_roll", "wrist_angle", "wrist_rotate"
+                        "joint1", "joint2", "joint3",
+                        "joint4", "joint5", "joint6"
                         ],preserve_order=True)
 
     return asset.data.joint_vel[:, joint_ids] - asset.data.default_joint_vel[:, joint_ids]
@@ -145,8 +145,8 @@ def get_joints_torques(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = Scene
                                 "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
                                 "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
                                 "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
-                                "waist"       , "shoulder"      , "elbow"        , 
-                                "forearm_roll", "wrist_angle"   , "wrist_rotate"
+                                "joint1", "joint2", "joint3",
+                                "joint4", "joint5", "joint6"
                                 ],preserve_order=True)
     return asset.data.applied_torque[:, joint]
 
@@ -666,4 +666,3 @@ def randomize_base_mass(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg = SceneE
     """
     asset: RigidObject | Articulation = env.scene[asset_cfg.name]
     return asset.root_physx_view.get_masses()[:, asset_cfg.body_ids].to(env.device)
-

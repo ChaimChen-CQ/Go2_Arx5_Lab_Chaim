@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import inspect
 import os
 import statistics
 import time
@@ -101,6 +102,8 @@ class OnPolicyRunner:
 
         # initialize algorithm
         alg_class = eval(self.alg_cfg.pop("class_name"))
+        supported_alg_args = set(inspect.signature(alg_class.__init__).parameters)
+        self.alg_cfg = {key: value for key, value in self.alg_cfg.items() if key in supported_alg_args}
         self.alg: PPO | Distillation = alg_class(
             policy, device=self.device, **self.alg_cfg, multi_gpu_cfg=self.multi_gpu_cfg
         )
@@ -399,6 +402,12 @@ class OnPolicyRunner:
 
         # -- Policy
         self.writer.add_scalar("Policy/mean_noise_std", mean_std.item(), locs["it"])
+        action_mean = self.alg.policy.action_mean
+        action_std = self.alg.policy.action_std
+        self.writer.add_scalar("Policy/leg_action_mean_abs", action_mean[:, :12].abs().mean().item(), locs["it"])
+        self.writer.add_scalar("Policy/arm_action_mean_abs", action_mean[:, 12:].abs().mean().item(), locs["it"])
+        self.writer.add_scalar("Policy/leg_noise_std", action_std[:, :12].mean().item(), locs["it"])
+        self.writer.add_scalar("Policy/arm_noise_std", action_std[:, 12:].mean().item(), locs["it"])
 
         # -- Performance
         self.writer.add_scalar("Perf/total_fps", fps, locs["it"])
@@ -414,6 +423,8 @@ class OnPolicyRunner:
                 self.writer.add_scalar("Rnd/weight", self.alg.rnd.weight, locs["it"])
             # everything else
             self.writer.add_scalar("Train/mean_reward", statistics.mean(locs["rewbuffer"]), locs["it"])
+            if len(locs["armrewbuffer"]) > 0:
+                self.writer.add_scalar("Train/mean_arm_reward", statistics.mean(locs["armrewbuffer"]), locs["it"])
             self.writer.add_scalar("Train/mean_episode_length", statistics.mean(locs["lenbuffer"]), locs["it"])
             if self.logger_type != "wandb":  # wandb does not support non-integer x-axis logging
                 self.writer.add_scalar("Train/mean_reward/time", statistics.mean(locs["rewbuffer"]), self.tot_time)
@@ -441,6 +452,8 @@ class OnPolicyRunner:
                     f"""{'Mean intrinsic reward:':>{pad}} {statistics.mean(locs['irewbuffer']):.2f}\n"""
                 )
             log_string += f"""{'Mean reward:':>{pad}} {statistics.mean(locs['rewbuffer']):.2f}\n"""
+            if len(locs["armrewbuffer"]) > 0:
+                log_string += f"""{'Mean arm reward:':>{pad}} {statistics.mean(locs['armrewbuffer']):.2f}\n"""
             # -- episode info
             log_string += f"""{'Mean episode length:':>{pad}} {statistics.mean(locs['lenbuffer']):.2f}\n"""
         else:

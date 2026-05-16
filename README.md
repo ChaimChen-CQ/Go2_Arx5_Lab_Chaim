@@ -54,7 +54,7 @@ conda activate your_isaaclab_env
 cd /path/to/Go2Arm_Lab
 
 # Launch training (headless)
-python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --headless
+python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --num_envs 2048 --max_iterations 6000 --headless
 ```
 
 #### Inference

@@ -60,7 +60,7 @@ class Go2ArmRslRlOnPolicyRunnerCfg(RslRlOnPolicyRunnerCfg):
 class Go2ArmFlatPPORunnerCfg(Go2ArmRslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
     max_iterations = 15000
-    save_interval = 1000
+    save_interval = 100
     experiment_name = "unitree_Go2arm_flat"
     empirical_normalization = False
     policy = Go2ArmRslRlPpoActorCriticCfg(

@@ -68,7 +68,6 @@ from isaaclab.envs import (
 )
 from isaaclab.utils.assets import retrieve_file_path
 from isaaclab.utils.dict import print_dict
-from isaaclab.utils.pretrained_checkpoint import get_published_pretrained_checkpoint
 
 from isaaclab_rl.rsl_rl import export_policy_as_jit  # onnx not avaliable
 
@@ -198,6 +197,8 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
     log_root_path = os.path.abspath(log_root_path)
     print(f"[INFO] Loading experiment from directory: {log_root_path}")
     if args_cli.use_pretrained_checkpoint:
+        from isaaclab.utils.pretrained_checkpoint import get_published_pretrained_checkpoint
+
         resume_path = get_published_pretrained_checkpoint("rsl_rl", train_task_name)
         if not resume_path:
             print("[INFO] Unfortunately a pre-trained checkpoint is currently unavailable for this task.")
@@ -261,7 +262,7 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
 
     # reset environment
     obs, _ = env.get_observations()
-    total, obs_new = prepare_obs(env)
+    obs = ppo_runner.change_obs_order(obs)
     
     timestep = 0
     # simulate environment
@@ -270,11 +271,10 @@ def main(env_cfg: ManagerBasedRLEnvCfg | DirectRLEnvCfg | DirectMARLEnvCfg, agen
         # run everything in inference mode
         with torch.inference_mode():
             # agent stepping
-            obs, obs_new = change_obs_order(obs, obs_new, total, env)
-
-            actions = policy(obs,hist_encoding=True) #no priv obs
+            actions = policy(obs, hist_encoding=False)
             # env stepping
             obs, _, _, _,_ = env.step(actions)
+            obs = ppo_runner.change_obs_order(obs)
         if args_cli.video:
             timestep += 1
             # Exit the play loop after recording one video

@@ -136,7 +136,7 @@ class EventCfg:
         func=mdp.randomize_rigid_body_mass,
         mode="startup",
         params={
-            "asset_cfg": SceneEntityCfg("robot", body_names="gripper_link"),
+            "asset_cfg": SceneEntityCfg("robot", body_names="end_effector"),
             "mass_distribution_params": (-0.1, 0.5),
             "operation": "add",
         },
@@ -208,7 +208,7 @@ class CommandsCfg:
     
     ee_pose = mdp.command_cfg.UniformPoseCommandCfg(
         asset_name="robot",
-        body_name="gripper_link",
+        body_name="end_effector",
         resampling_time_range=(6.0,8.0),
         debug_vis=True,
         is_Go2ARM=True,
@@ -276,14 +276,14 @@ class ActionsCfg:
     )   
     arm_pose = mdp.JointPositionActionCfg(asset_name="robot",
                                           joint_names=[
-                                              "waist", "shoulder", "elbow", 
-                                              "forearm_roll", "wrist_angle", "wrist_rotate"],
-                                           scale = {"waist":        0.5, # 0.8
-                                                    "shoulder":     0.5, # 0.35
-                                                    "elbow":        0.5, # 0.35
-                                                    "forearm_roll": 0.5, # 0.35
-                                                    "wrist_angle":  0.5, # 0.35
-                                                    "wrist_rotate": 0.5}, # 0.35
+                                              "joint1", "joint2", "joint3",
+                                              "joint4", "joint5", "joint6"],
+                                           scale = {"joint1": 0.5, # 0.8
+                                                    "joint2": 0.5, # 0.35
+                                                    "joint3": 0.5, # 0.35
+                                                    "joint4": 0.5, # 0.35
+                                                    "joint5": 0.5, # 0.35
+                                                    "joint6": 0.5}, # 0.35
                                             use_default_offset=True,
                                             preserve_order=True,
     )
@@ -339,7 +339,7 @@ class RewardsCfg:
     end_effector_position_tracking = RewTerm(
         func=mdp.position_command_error_exp,
         weight=2.5,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names="gripper_link"),
+        params={"asset_cfg": SceneEntityCfg("robot", body_names="end_effector"),
                 "command_name": "ee_pose",
                 "std": 0.2},
     )
@@ -347,7 +347,7 @@ class RewardsCfg:
     end_effector_orientation_tracking = RewTerm(
         func=mdp.orientation_command_error,
         weight=-1.5,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names="gripper_link"), 
+        params={"asset_cfg": SceneEntityCfg("robot", body_names="end_effector"),
                 "command_name": "ee_pose"},
     )
 
@@ -490,18 +490,18 @@ class TerminationsCfg:
     """Termination terms for the MDP."""
 
     time_out = DoneTerm(func=mdp.time_out, time_out=True)
-    base_contact = DoneTerm(
-        func=mdp.illegal_contact,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names="base"), "threshold": 0.5},
-    )
+    # base_contact = DoneTerm(
+    #     func=mdp.illegal_contact,
+    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names="base"), "threshold": 0.5},
+    # )
     thigh_contact = DoneTerm(
         func=mdp.illegal_contact,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_thigh"), "threshold":0.5},
     )
-    arm_contact = DoneTerm(
-        func=mdp.illegal_contact,
-        params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_link"), "threshold": 0.5},
-    )
+    # arm_contact = DoneTerm(
+    #     func=mdp.illegal_contact,
+    #     params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names="link.*"), "threshold": 0.5},
+    # )
     calf_contact = DoneTerm(
         func=mdp.illegal_contact,
         params={"sensor_cfg": SceneEntityCfg("contact_forces", body_names=".*_calf"), "threshold": 0.5},
@@ -569,4 +569,3 @@ class LocomotionVelocityEnvCfg(ManagerBasedRLEnvCfg):
         else:
             if self.scene.terrain.terrain_generator is not None:
                 self.scene.terrain.terrain_generator.curriculum = False
-

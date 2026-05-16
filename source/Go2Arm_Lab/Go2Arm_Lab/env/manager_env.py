@@ -3,8 +3,8 @@ from . import local_manager
 
 class ManagerRLEnv(ManagerBasedRLEnv):
     """Configuration for the locomotion velocity-tracking environment."""
-    def __init__(self, cfg, render_mode, **kwargs):
-        super().__init__(cfg=cfg)
+    def __init__(self, cfg, render_mode=None, **kwargs):
+        super().__init__(cfg=cfg, render_mode=render_mode, **kwargs)
         self._sim_step_counter = 0
 
 
