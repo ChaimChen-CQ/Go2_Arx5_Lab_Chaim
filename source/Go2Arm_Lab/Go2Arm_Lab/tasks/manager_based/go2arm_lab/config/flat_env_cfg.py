@@ -19,19 +19,34 @@ class Go2ARMFlatEnvCfg(LocomotionVelocityEnvCfg):
 
         # event
         self.events.push_robot = None
+        self.events.reset_base.params["pose_range"] = {"x": (-0.05, 0.05), "y": (-0.05, 0.05), "yaw": (-0.05, 0.05)}
+        self.events.reset_base.params["velocity_range"] = {
+            "x": (0.0, 0.0),
+            "y": (0.0, 0.0),
+            "z": (0.0, 0.0),
+            "roll": (0.0, 0.0),
+            "pitch": (0.0, 0.0),
+            "yaw": (0.0, 0.0),
+        }
+        self.events.reset_robot_joints.params["position_range"] = (1.0, 1.0)
+        self.events.actuator_gains = None
+        for joint_name in self.actions.joint_pos.scale:
+            self.actions.joint_pos.scale[joint_name] = 0.35
+        self.terminations.thigh_contact.params["threshold"] = 5.0
+        self.terminations.calf_contact.params["threshold"] = 5.0
 
         # flat terrain 
         self.scene.terrain.terrain_type = "plane"
         self.scene.terrain.terrain_generator = None
 
         # velocity command
-        self.commands.base_velocity.curriculum_coeff = 4000
+        self.commands.base_velocity.curriculum_coeff = 1000
         # init
-        self.commands.base_velocity.ranges_init.lin_vel_x  = (0.0, 0.0)
+        self.commands.base_velocity.ranges_init.lin_vel_x  = (0.15, 0.3)
         self.commands.base_velocity.ranges_init.lin_vel_y  = (-0.0, 0.0)
         self.commands.base_velocity.ranges_init.ang_vel_z  = (-0.0, 0.0)
         # final
-        self.commands.base_velocity.ranges_final.lin_vel_x = (0.0, 1.0)
+        self.commands.base_velocity.ranges_final.lin_vel_x = (0.2, 1.0)
         self.commands.base_velocity.ranges_final.lin_vel_y = (-0.5, 0.5)
         self.commands.base_velocity.ranges_final.ang_vel_z = (-0.5, 0.5)
   
@@ -54,24 +69,27 @@ class Go2ARMFlatEnvCfg(LocomotionVelocityEnvCfg):
         self.rewards.end_effector_action_smoothness.weight = -0.04 #-0.02
         
         # leg
-        self.rewards.tracking_lin_vel_x_l1.weight = 3.5
+        self.rewards.tracking_lin_vel_x_l1.weight = 8.0
+        self.rewards.tracking_lin_vel_x_l1.params["std"] = 0.05
         self.rewards.track_ang_vel_z_exp.weight = 2.0
         self.rewards.lin_vel_z_l2.weight = -2.5
         self.rewards.ang_vel_xy_l2.weight = -0.05
-        self.rewards.dof_torques_l2.weight = -2.0e-5
-        self.rewards.dof_acc_l2.weight = -2.5e-7
-        self.rewards.action_rate_l2.weight = -0.01
+        self.rewards.dof_torques_l2.weight = -1.0e-5
+        self.rewards.dof_acc_l2.weight = -1.0e-7
+        self.rewards.action_rate_l2.weight = -0.005
         
         self.rewards.feet_air_time.weight = 0.0 #0.5
-        self.rewards.F_feet_air_time.weight = 1.0 #0.5
-        self.rewards.R_feet_air_time.weight = 1.0 #0.5
+        self.rewards.F_feet_air_time.weight = 0.3 #0.5
+        self.rewards.R_feet_air_time.weight = 0.3 #0.5
+        self.rewards.F_feet_air_time.params["threshold"] = 0.2
+        self.rewards.R_feet_air_time.params["threshold"] = 0.2
 
         self.rewards.feet_height.weight = -0.0 #TODO
-        self.rewards.feet_height_body.weight = -3.0 #TODO
+        self.rewards.feet_height_body.weight = 0.0 #TODO
         self.rewards.foot_contact.weight = 0.003 #0.003
-        self.rewards.hip_deviation.weight = -0.2
-        self.rewards.joint_deviation.weight = -0.01
-        self.rewards.action_smoothness.weight = -0.02
+        self.rewards.hip_deviation.weight = -0.05
+        self.rewards.joint_deviation.weight = -0.003
+        self.rewards.action_smoothness.weight = -0.005
         self.rewards.height_reward.weight = -2.0
         self.rewards.flat_orientation_l2.weight = -1.0
 

@@ -64,11 +64,11 @@ class Go2ArmFlatPPORunnerCfg(Go2ArmRslRlOnPolicyRunnerCfg):
     experiment_name = "unitree_Go2arm_flat"
     empirical_normalization = False
     policy = Go2ArmRslRlPpoActorCriticCfg(
-        init_noise_std=1.0,
+        init_noise_std=0.5,
         actor_hidden_dims=[256],
         critic_hidden_dims=[256],
         activation="elu",
-        activation_out="elu",
+        activation_out="tanh",
         leg_control_head_hidden_dims = [256, 128],
         arm_control_head_hidden_dims = [256, 128],
         critic_leg_control_head_hidden_dims = [256, 128, 64],

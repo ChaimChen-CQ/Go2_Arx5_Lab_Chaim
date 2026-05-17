@@ -397,6 +397,14 @@ def base_height_l2(
     return torch.square(curr_height - target_height)
 
 
+def root_height_below_minimum(
+    env: ManagerBasedRLEnv, minimum_height: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    """Terminate when the robot root drops below a minimum world-frame height."""
+    asset: RigidObject = env.scene[asset_cfg.name]
+    return asset.data.root_pos_w[:, 2] < minimum_height
+
+
 def body_lin_acc_l2(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     """Penalize the linear acceleration of bodies using L2-kernel."""
     asset: Articulation = env.scene[asset_cfg.name]

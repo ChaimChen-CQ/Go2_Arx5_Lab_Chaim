@@ -58,6 +58,12 @@ cd /path/to/Go2Arm_Lab
 python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --num_envs 2048 --max_iterations 6000 --headless 
 ```
 
+从 5 月 16 日最新的 flat-policy checkpoint 继续训练：
+
+```
+python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --num_envs 2048 --resume --load_run 2026-05-16_21-12-54_continue_2000 --checkpoint model_2498.pt --run_name continue_from_2498 --max_iterations 2000 --headless
+```
+
 #### 推理
 
 在单个环境中部署训练好的策略：
@@ -73,6 +79,11 @@ cd /path/to/Go2Arm_Lab
 python scripts/rsl_rl/play.py --task Isaac-Go2Arm-Flat-Play --num_envs 1 
 ```
 
+播放 5 月 16 日继续训练得到的最新 flat-policy checkpoint：
+
+```
+python scripts/rsl_rl/play.py --task Isaac-Go2Arm-Flat-Play --num_envs 1 --checkpoint /home/chaim/Go2Arm_Lab/logs/rsl_rl/unitree_Go2arm_flat/2026-05-16_21-12-54_continue_2000/model_2498.pt --real-time
+```
 
 ## 🙏 致谢
 本项目的强化学习算法实现参考了[Deep-Whole-Body-Control](https://github.com/MarkFzp/Deep-Whole-Body-Control)，特此致谢。

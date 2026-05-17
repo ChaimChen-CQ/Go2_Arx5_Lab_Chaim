@@ -1,6 +1,6 @@
 import os
 import isaaclab.sim as sim_utils
-from isaaclab.actuators import DelayedPDActuatorCfg
+from isaaclab.actuators import DCMotorCfg, DelayedPDActuatorCfg
 from isaaclab.assets.articulation import ArticulationCfg
 
 # TODO:
@@ -27,9 +27,9 @@ GO2_ARX5_CFG = ArticulationCfg(
             max_depenetration_velocity=1.0,
         ),
         articulation_props=sim_utils.ArticulationRootPropertiesCfg(
-            enabled_self_collisions=True,
+            enabled_self_collisions=False,
             solver_position_iteration_count=4,
-            solver_velocity_iteration_count=0,
+            solver_velocity_iteration_count=1,
         ),
         # collision_props=sim_utils.CollisionPropertiesCfg(
         #     collision_enabled=True,
@@ -60,14 +60,14 @@ GO2_ARX5_CFG = ArticulationCfg(
     ),
     soft_joint_pos_limit_factor=0.9,
     actuators={
-        "base_legs": DelayedPDActuatorCfg(
+        "base_legs": DCMotorCfg(
             joint_names_expr=[".*_hip_joint", ".*_thigh_joint", ".*_calf_joint"],
-            stiffness=30.0,
-            damping=0.6,
-            armature=0.01,
-            min_delay=0,
-            max_delay=4,
-            friction=0.01,
+            effort_limit=35.0,
+            saturation_effort=35.0,
+            velocity_limit=30.0,
+            stiffness=35.0,
+            damping=0.8,
+            friction=0.0,
         ),
         # DO NOT MOVE IF POSSIBLE
         "joint1": DelayedPDActuatorCfg(
