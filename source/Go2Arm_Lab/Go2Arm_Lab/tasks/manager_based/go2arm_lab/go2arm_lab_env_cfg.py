@@ -351,6 +351,16 @@ class RewardsCfg:
                 "command_name": "ee_pose"},
     )
 
+    end_effector_forward_tracking = RewTerm(
+        func=mdp.position_command_x_error_exp,
+        weight=0.0,
+        params={
+            "asset_cfg": SceneEntityCfg("robot", body_names="end_effector"),
+            "command_name": "ee_pose",
+            "std": 0.08,
+        },
+    )
+
     end_effector_action_rate = RewTerm(func=mdp.action_rate_l2_arm, weight=-0.005)
 
     end_effector_action_smoothness = RewTerm(func=mdp.arm_action_smoothness_penalty, weight=-0.02)

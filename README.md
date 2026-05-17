@@ -48,7 +48,7 @@ Run reinforcement-learning training in headless mode for higher efficiency:
 
 ```
 # Activate IsaacLab environment
-conda activate your_isaaclab_env
+conda activate <ISAACLAB_CONDA_ENV>
 
 # Go to Go2Arm_Lab
 cd /path/to/Go2Arm_Lab
@@ -57,10 +57,10 @@ cd /path/to/Go2Arm_Lab
 python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --num_envs 2048 --max_iterations 6000 --headless
 ```
 
-Continue from the latest May 16 flat-policy checkpoint:
+Continue from a checkpoint:
 
 ```
-python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --num_envs 2048 --resume --load_run 2026-05-16_21-12-54_continue_2000 --checkpoint model_2498.pt --run_name continue_from_2498 --max_iterations 2000 --headless
+python scripts/rsl_rl/train.py --task Isaac-Go2Arm-Flat --num_envs 2048 --resume --load_run <RUN_DIR_NAME> --checkpoint <CHECKPOINT_FILE> --run_name <NEW_RUN_NAME> --max_iterations 2000 --headless
 ```
 
 #### Inference
@@ -69,7 +69,7 @@ Deploy a trained policy in a single environment:
 
 ```
 # Activate IsaacLab environment
-conda activate your_isaaclab_env
+conda activate <ISAACLAB_CONDA_ENV>
 
 # Go to IsaacLab root
 cd /path/to/Go2Arm_Lab
@@ -78,10 +78,10 @@ cd /path/to/Go2Arm_Lab
 python scripts/rsl_rl/play.py --task Isaac-Go2Arm-Flat-Play --num_envs 1
 ```
 
-To replay the latest continued flat-policy checkpoint from the May 16 run:
+Replay a trained checkpoint:
 
 ```
-python scripts/rsl_rl/play.py --task Isaac-Go2Arm-Flat-Play --num_envs 1 --checkpoint /home/chaim/Go2Arm_Lab/logs/rsl_rl/unitree_Go2arm_flat/2026-05-16_21-12-54_continue_2000/model_2498.pt --real-time
+python scripts/rsl_rl/play.py --task Isaac-Go2Arm-Flat-Play --num_envs 1 --checkpoint <CHECKPOINT_PATH> --real-time
 ```
 
 ## 🙏 Acknowledgments  

@@ -57,6 +57,18 @@ def position_command_error_exp(env: ManagerBasedRLEnv, command_name: str, std: f
     return output
 
 
+def position_command_x_error_exp(
+    env: ManagerBasedRLEnv, command_name: str, std: float, asset_cfg: SceneEntityCfg
+) -> torch.Tensor:
+    """Reward end-effector forward reach tracking in the robot base frame."""
+    asset: RigidObject = env.scene[asset_cfg.name]
+    command = env.command_manager.get_command(command_name)
+    curr_pos_w = asset.data.body_state_w[:, asset_cfg.body_ids[0], :3]
+    curr_pos_b, _ = subtract_frame_transforms(asset.data.root_state_w[:, :3], asset.data.root_state_w[:, 3:7], curr_pos_w)
+    x_error = torch.abs(command[:, 0] - curr_pos_b[:, 0])
+    return torch.exp(-x_error / std)
+
+
 def orientation_command_error(env: ManagerBasedRLEnv, command_name: str, asset_cfg: SceneEntityCfg) -> torch.Tensor:
     """Penalize tracking orientation error using shortest path.
 
